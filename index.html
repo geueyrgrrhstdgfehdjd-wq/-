@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แผงกดคีย์</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Prompt', -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: #030008;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(18, 10, 28, 0.85);
+            border: 1px solid #3c1e5d;
+            border-radius: 28px;
+            padding: 30px 20px;
+            box-shadow: 0 0 30px rgba(138, 43, 226, 0.25);
+            text-align: center;
+            position: relative;
+        }
+
+        /* โลโก้รูปภาพ */
+        .avatar-container {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            border: 2px solid #a855f7;
+            box-shadow: 0 0 20px #a855f7, inset 0 0 15px rgba(168, 85, 247, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .title-brand {
+            font-family: 'Prompt', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .badge-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            margin-bottom: 25px;
+        }
+
+        .badge-live {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid #10b981;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .badge-live::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 6px #10b981;
+        }
+
+        .auth-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            color: #a855f7;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .auth-title::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #3c1e5d;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            color: #9ca3af;
+            margin-bottom: 8px;
+        }
+
+        .input-field, .select-field {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid #3c1e5d;
+            border-radius: 16px;
+            padding: 12px 16px;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus, .select-field:focus {
+            border-color: #a855f7;
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
+        }
+
+        .select-field option {
+            background-color: #120a1c;
+            color: #fff;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(90deg, #8b5cf6, #d946ef);
+            border: none;
+            border-radius: 25px;
+            padding: 14px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 0 20px rgba(217, 70, 239, 0.4);
+            transition: transform 0.1s;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-box {
+            background: #120a1c;
+            border: 1px solid #a855f7;
+            border-radius: 20px;
+            padding: 25px;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.4);
+            animation: popIn 0.3s ease;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-box h3 {
+            color: #10b981;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .key-list-box {
+            background: #000;
+            border: 1px solid #3c1e5d;
+            border-radius: 12px;
+            padding: 12px;
+            max-height: 180px;
+            overflow-y: auto;
+            text-align: left;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 13px;
+            color: #c084fc;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .btn-copy {
+            background: #a855f7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        .btn-close {
+            background: transparent;
+            color: #9ca3af;
+            border: none;
+            font-size: 13px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .toast {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #10b981;
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- โลโก้รูปภาพตามลิงก์ -->
+        <div class="avatar-container">
+            <img src="https://i.postimg.cc/FYy42fyN/image.png" alt="Logo" class="avatar-img" onerror="this.src='https://postimg.cc/FYy42fyN';">
+        </div>
+
+        <h1 class="title-brand">แผงกดคีย์</h1>
+        <div class="badge-container">
+            <span class="badge-live">LIVE</span>
+            <span style="color: #6b7280;">Key Generator</span>
+        </div>
+
+        <div class="auth-title">
+            <span>GENERATE</span>
+            <span style="color: #fff;">สร้างคีย์ใช้งาน</span>
+        </div>
+
+        <form id="keyForm" onsubmit="generateKeys(event)">
+            <div class="input-group">
+                <label>ประเภทระยะเวลา</label>
+                <select id="duration-type" class="select-field" onchange="toggleDayInput()">
+                    <option value="day">รายวัน (Day)</option>
+                    <option value="month">รายเดือน (Month)</option>
+                    <option value="lifetime">ถาวร (Lifetime)</option>
+                </select>
+            </div>
+
+            <div class="input-group" id="amount-days-group">
+                <label id="duration-label">จำนวนวัน</label>
+                <input type="number" id="duration-value" class="input-field" value="1" min="1" required>
+            </div>
+
+            <div class="input-group">
+                <label>จำนวนคีย์ที่ต้องการสร้าง</label>
+                <input type="number" id="key-count" class="input-field" value="1" min="1" max="100" required>
+            </div>
+
+            <button type="submit" class="btn-submit">รับคีย์</button>
+        </form>
+    </div>
+
+    <div class="modal-overlay" id="resultModal">
+        <div class="modal-box">
+            <h3>✓ สร้างคีย์สำเร็จ!</h3>
+            <p style="font-size: 13px; color: #9ca3af;">รายการคีย์ของคุณ (ไม่ซ้ำกัน):</p>
+            
+            <div class="key-list-box" id="keyList"></div>
+
+            <button class="btn-copy" onclick="copyKeys()">ก๊อปปี้คีย์ทั้งหมด</button>
+            <button class="btn-close" onclick="closeModal()">ปิดหน้าต่าง</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">คัดลอกคีย์เรียบร้อยแล้ว!</div>
+
+    <script>
+        function toggleDayInput() {
+            const type = document.getElementById('duration-type').value;
+            const daysGroup = document.getElementById('amount-days-group');
+            const label = document.getElementById('duration-label');
+            const input = document.getElementById('duration-value');
+
+            if (type === 'lifetime') {
+                daysGroup.style.display = 'none';
+                input.removeAttribute('required');
+            } else {
+                daysGroup.style.display = 'block';
+                input.setAttribute('required', 'required');
+                label.innerText = type === 'day' ? 'จำนวนวัน' : 'จำนวนเดือน';
+            }
+        }
+
+        function getRandomDigits() {
+            const length = Math.floor(Math.random() * 10) + 1;
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += Math.floor(Math.random() * 10);
+            }
+            return result;
+        }
+
+        function generateKeys(e) {
+            e.preventDefault();
+            
+            const type = document.getElementById('duration-type').value;
+            const durationVal = document.getElementById('duration-value').value;
+            const count = parseInt(document.getElementById('key-count').value);
+            
+            const usedNumbers = new Set();
+            let generatedKeys = [];
+
+            while (usedNumbers.size < count) {
+                const randomNum = getRandomDigits();
+                
+                if (!usedNumbers.has(randomNum)) {
+                    usedNumbers.add(randomNum);
+                    
+                    let key = '';
+                    if (type === 'day') {
+                        key = `PROXYRP-${durationVal}D-${randomNum}`;
+                    } else if (type === 'month') {
+                        key = `PROXYRP-${durationVal}M-${randomNum}`;
+                    } else if (type === 'lifetime') {
+                        key = `PROXYRP-INF-${randomNum}`;
+                    }
+                    
+                    generatedKeys.push(key);
+                }
+            }
+
+            document.getElementById('keyList').innerText = generatedKeys.join('\n');
+            document.getElementById('resultModal').style.display = 'flex';
+        }
+
+        function copyKeys() {
+            const keyText = document.getElementById('keyList').innerText;
+            navigator.clipboard.writeText(keyText).then(() => {
+                const toast = document.getElementById('toast');
+                toast.style.display = 'block';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 2000);
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('resultModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
